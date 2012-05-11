@@ -2,7 +2,7 @@
 
 This bundle  lets you generate **RSS 2.0**, **RSS 0.92** and **Atom** feeds by just setting the data you want - and __Feeder__ will take care of mapping it to the target standard-specific output. All __Feeder__ scripts are in public domain and require PHP 5+.
 
-[Sample generated feeds, detailed API and description](http://proger.i-forge.net/PHP_Feeder/7sg). 
+[Sample generated feeds, detailed API and description](http://proger.i-forge.net/PHP_Feeder/7sg) | [Laravel bundle](http://bundles.laravel.com/bundle/detail/feeder) | [Forum thread](http://forums.laravel.com/viewtopic.php?id=1160)
 
 It's used in real action on Laravel.ru's article feed: [RSS 2.0](http://laravel.ru/feed/articles/rss20) | [RSS 0.92](http://laravel.ru/feed/articles/rss092) | [Atom](http://laravel.ru/feed/articles/atom) [all three are generated using the code almost identical to the example below].
 
