@@ -1,6 +1,6 @@
 # Feeder
 
-This bundle  lets you generate **RSS 2.0**, **RSS 0.92** and **Atom** feeds by just setting the data you want - and __Feeder__ will take care of mapping it to the target standard-specific output.
+This bundle  lets you generate **RSS 2.0**, **RSS 0.92** and **Atom** feeds by just setting the data you want - and __Feeder__ will take care of mapping it to the target standard-specific output. All __Feeder__ scripts are in public domain and require PHP 5+.
 
 [Sample generated feeds, detailed API and description](http://proger.i-forge.net/PHP_Feeder/7sg). 
 
@@ -51,6 +51,10 @@ $feed->send('rss20');
 php artisan bundle:install feeder
 ```
 
+`example-*.php` and `smile.png` files are only samples and are not required for work. 
+`.htaccess` and `entry.php` are only used if you're using __TextFeeder__. 
+`chained.php` is only used if you're using chained calls (like in the example above). `feeder.php` is the core set of classes that is self-contained.
+
 **application/bundles.php**:
 ```PHP
 'feeder' => array(
@@ -72,4 +76,4 @@ php artisan bundle:install feeder
 ),
 ```
 
-> The list of autoloader mappings depends on your application - if you're just using chained calls (as in the example above) you only need the first **Feed => chained** mapping; otherwise you might want to autostart the bundle if you're unsure. You can also define [IoC containers](http://laravel.com/docs/ioc) for starting the bundle when it's used.
+The list of autoloader mappings depends on your application - if you're just using chained calls (as in the example above) you only need the first **Feed => chained** mapping; otherwise you might want to autostart the bundle if you're unsure. You can also define [IoC containers](http://laravel.com/docs/ioc) for starting the bundle when it's used.
