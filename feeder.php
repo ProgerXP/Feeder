@@ -48,7 +48,7 @@ class EFeed extends Exception {
  ************************************************************************/
 
 abstract class FeedObject {
-  const Version = 1.1;
+  const Version = 1.2;
   const Homepage = 'http://proger.i-forge.net/PHP_Feeder/7sg';
 
   static $iriEncode = array('"' => '%22', '&' => '%26', '<' => '%3C', '>' => '%3E',
@@ -743,8 +743,10 @@ class FeedImage extends FeedObjWithCommonAttrs {
           if (is_numeric($part)) {
             $this->width > 0 ? $this->Width($part) : $this->Height($part);
           } elseif (isset($operators[ trim($part, '0..9') ])) {
-            $num = trim($part, '0..9');
-            is_numeric($part[0]) ? $this->Width($num) : $this->Height($num);
+            @list($width, $height) = explode(trim($part, '0..9'), $part);
+
+            isset($width) and $this->Width($width);
+            isset($height) and $this->Height($height);
           } else {
             $this->ImageURL($part);
           }
@@ -1640,7 +1642,7 @@ abstract class XmlFeedOut extends FeedOut {
 
             if ($pickFirstItem) { break; }
           }
-        } elseif ("$value" !== '') {
+        } elseif ("$value" !== '' and $value !== 0) {
           $urlencode and $value = $this->EncodeIRI($value);
           $value = $this->Quote($value, ENT_NOQUOTES);
           $result .= "$indent<$tag>$value</$tag>\n";
@@ -1808,7 +1810,7 @@ class Rss092Feed extends XmlFeedOut {
     'generator' => array('generator', 'WriteGeneratorComment'), array('docs', 'WriteDocs'),
     'title', 'description',
     'link' => array('permalink'), 'language' => array('lang', 'WriteLanguage'),
-    'image', 'copyright', 'managingEditor' => array('authors'),
+    array('image', 'WriteImage'), 'copyright', 'managingEditor' => array('authors'),
     'webMaster' => array('webMasters'), 'rating', 'lastBuildDate' => array('updated', 'WriteTime'),
     array('pubDate', 'WriteTime'), array('skipDays', 'WriteSkipDays'), array('skipHours', 'WriteSkipHours'),
     'textInput', 'cloud', 'link' => array('links', 'WriteStdFeedLinks'));
@@ -1893,7 +1895,8 @@ class Rss092Feed extends XmlFeedOut {
         $result = "$indent<$tag>$result</$tag>\n";
       }
     } elseif ($obj instanceof FeedImage) {
-      $children = array('url', 'title', 'link', 'width', 'height', 'description');
+      $children = array('url' => 'ImageURL', 'title', 'link' => 'LinkURL',
+                        'width', 'height', 'description');
       $result = $this->FullXmlTag($tag, array(), $children, $indentLevel, $obj);
     } elseif ($obj instanceof FeedPerson) {
       if ($email = $obj->EMail()) {
@@ -1977,6 +1980,15 @@ class Rss092Feed extends XmlFeedOut {
       // http://backend.userland.com/stories/storyReader$16
       $lang = strtok(strtok($lang, '-'), '_');
       return $this->Indent($indent)."<language>$lang</language>\n";
+    }
+  }
+
+  function WriteImage($channel, $indent) {
+    $image = $channel->Logo();
+    $image->ImageURL() or $image = $channel->Icon();
+
+    if ($image->ImageURL()) {
+      return $this->WriteObject($image, $indent, 'image');
     }
   }
 

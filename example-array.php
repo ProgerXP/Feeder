@@ -5,7 +5,13 @@ $channel = array(
   'title'           => 'My Feed',
   'author'          => 'Proger_XP proger.xp@gmail.com http://proger.i-forge.net',
   'description'     => 'Just another PHP Feed',
-  'baseurl'         => 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['REQUEST_URI']).'/',
+  'category'        => 'http://example.com Category Label here.',
+  // it doesn't matter what follows "category" after a space - we need
+  // something so this array key is unique and won't override preceding one:
+  'category 2'      => 'Second Label',
+  'icon'            => '100x20 http://example.com/icon.gif',
+  // it's only possible to set width, height and image URL using text form:
+  'logo'            => '121x83 http://example.com/logo.png',
 );
 
 $entries = array(
