@@ -22,7 +22,7 @@ $feed->logo(asset('logo.png'))
      ->icon(URL::home().'favicon.ico')
      ->webmaster('Proger_XP proger.xp@gmail.com http://i-forge.net/me')
      ->author   ('Proger_XP proger.xp@gmail.com http://i-forge.net/me')
-     ->rating('SFW')->
+     ->rating('SFW')
      ->pubdate(time())
      ->ttl(60)
      ->title('My feed')
@@ -43,7 +43,8 @@ foreach ($posts as $post) {
 }
 
 $feed->send('rss20');
-// or just $feed->Rss20(); - or Rss092() - or ->Atom()
+// this is a shortcut for calling $feed->feed()->send(...);
+// you can also just $feed->Rss20(), Rss092() or Atom();
 ```
 
 ### Installation
