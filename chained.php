@@ -51,6 +51,8 @@ class Feed extends Feeder {
 }
 
 class FeedAccessor {
+  static $feedMethods = array('Send', 'Build', 'Atom', 'Rss092', 'Rss20');
+
   public $methods = array('url' => 'URL', 'Webmaster' => 'WebMaster',
                           'Pubdate' => 'PubDate');
 
@@ -100,8 +102,8 @@ class FeedAccessor {
   function __call($name, $arguments) {
     $name = ucfirst($name);
 
-    if (method_exists($this, $name)) {
-      return call_user_func_array(array($this, $name), $arguments);
+    if (in_array($name, static::$feedMethods)) {
+      return call_user_func_array(array($this->Feed()->Object(), $name), $arguments);
     } else {
       method_exists($this->object, $name) or $name = strtr($name, $this->methods);
 
