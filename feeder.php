@@ -1050,7 +1050,9 @@ class TextFeeder extends Feeder {
   }
 
   function EntriesPerFeed($new = null) {
-    return $this->Accessor('entriesPerFeed', $new);
+    $result = $this->Accessor('entriesPerFeed', $new);
+    isset($new) and $this->Load();
+    return $result;
   }
 
   protected function Load() {
@@ -1887,7 +1889,9 @@ class Rss092Feed extends XmlFeedOut {
 
       if ($result === '') {
         $result = (string) $obj->Get($obj->Has('html') ? 'html' : 'xhtml');
-        $result === '' or $result = strip_tags($result);
+        if ($result !== '') {
+          $result = html_entity_decode(strip_tags($result), ENT_QUOTES, 'utf-8');
+        }
       }
 
       if ($result !== '') {
@@ -2058,7 +2062,12 @@ class Rss20Feed extends Rss092Feed {
 */
 
 class FeedServer extends FeedObject {
-  static function CurDir() { return strtr(getcwd(), '\\', '/').'/'; }
+  static $baseURL;
+  static $curDir;
+
+  static function CurDir() {
+    return strtr(self::$curDir ? self::$curDir : getcwd(), '\\', '/').'/';
+  }
 
   static function ErrorHeaders($status = '500 Internal Server Error') {
     header("HTTP/1.0 $status");
@@ -2067,6 +2076,24 @@ class FeedServer extends FeedObject {
 
     $line = "TEXT FEEDER [ $status ]";
     echo "$line\n", str_repeat('=', strlen($line)), "\n\n";
+  }
+
+  static function ServeCatching() {
+    try {
+      self::Serve();
+    } catch (ENotATextFeedPath $e) {
+      self::ErrorHeaders('404 Not Found');
+      echo $e->getMessage();
+    } catch (ENoFeedEntry $e) {
+      self::ErrorHeaders('404 Not Found');
+      echo $e->getMessage();
+    } catch (EFeed $e) {
+      self::ErrorHeaders();
+      echo $e->getMessage();
+    } catch (Exception $e) {
+      self::ErrorHeaders();
+      echo 'Error '.get_class($e).'.';
+    }
   }
 
   static function Serve() {
@@ -2087,7 +2114,7 @@ class FeedServer extends FeedObject {
     $feeder = new TextFeeder(self::CurDir(), self::BaseURL());
 
     if ($count = &$_GET['count']) {
-      $feeder->entriesPerFeed = $count;
+      $feeder->EntriesPerFeed($count);
     }
 
     $format = @$_REQUEST['format'];
@@ -2098,6 +2125,10 @@ class FeedServer extends FeedObject {
   }
 
     static function BaseURL() {
+      if (self::$baseURL) {
+        return self::$baseURL;
+      }
+
       if (isset($_SERVER['DOCUMENT_ROOT']) and isset($_SERVER['HTTP_HOST'])) {
         $hostRoot = $_SERVER['DOCUMENT_ROOT'];
         $lastDelim = substr($hostRoot, -1);
@@ -2185,27 +2216,8 @@ class FeedServer extends FeedObject {
 if (count(get_included_files()) < 2 or defined('ServeFeeds')) {
   set_time_limit(5);
   ignore_user_abort(false);
-  mb_internal_encoding('UTF-8');
+  function_exists('mb_internal_encoding') and mb_internal_encoding('UTF-8');
 
-  if (defined('ServeFeeds')) {
-    // be aware that exceptions might be thrown here.
-    FeedServer::Serve();
-    return true;
-  } else {
-    try {
-      FeedServer::Serve();
-    } catch (ENotATextFeedPath $e) {
-      FeedServer::ErrorHeaders('404 Not Found');
-      echo $e->getMessage();
-    } catch (ENoFeedEntry $e) {
-      FeedServer::ErrorHeaders('404 Not Found');
-      echo $e->getMessage();
-    } catch (EFeed $e) {
-      FeedServer::ErrorHeaders();
-      echo $e->getMessage();
-    } catch (Exception $e) {
-      FeedServer::ErrorHeaders();
-      echo 'Error '.get_class($e).'.';
-    }
-  }
+  ServeFeeds == true and FeedServer::ServeCatching();
+  return true;
 }

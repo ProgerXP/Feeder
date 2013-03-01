@@ -39,4 +39,3 @@ $feeder->Entry(1, $entry);
 
 $output = new AtomFeed;
 $output->Output($feeder);
-
