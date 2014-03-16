@@ -48,12 +48,19 @@ $feed->send('rss20');
 ```
 
 ### Installation
+
+#### Composer
+
+Available under `proger/feeder` at [Packagist](https://packagist.org/packages/proger/feeder).
+
+#### Laravel 3
+
 ```
 php artisan bundle:install feeder
 ```
 
-`example-*.php` and `smile.png` files are only samples and are not required for work. 
-`.htaccess` and `entry.php` are only used if you're using __TextFeeder__. 
+`example-*.php` and `smile.png` files are only samples and are not required for work.
+`.htaccess` and `entry.php` are only used if you're using __TextFeeder__.
 `chained.php` is only used if you're using chained calls (like in the example above). `feeder.php` is the core set of classes that is self-contained.
 
 **application/bundles.php**:

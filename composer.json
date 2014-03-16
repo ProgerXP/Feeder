@@ -1,6 +1,6 @@
 {
   "name": "proger/feeder",
-  "description": "Laravel bundle and standalone module to generate standards-compliant RSS 0.92, 2.0 and Atom feeds from a single data source.",
+  "description": "Standalone module to generate standards-compliant RSS 0.92, 2.0 and Atom feeds from a single data source.",
   "keywords": ["rss", "rss2", "atom", "feed", "subscription"],
   "homepage": "https://github.com/ProgerXP/Feeder",
   "license": "SAX-PD",
